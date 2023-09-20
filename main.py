@@ -1,6 +1,7 @@
 # TODO: fix bug when no money is put in - party completed, require fixing for when a float is entered.
 # TODO: write calculate profit function
 # TODO: write report function
+# TODO: write OFF function
 # TODO: write function to check for miss-spelling - completed
 
 MENU = {
