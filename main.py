@@ -1,8 +1,12 @@
-# TODO: fix bug when no money is put in - party completed, require fixing for when a float is entered.
-# TODO: write calculate profit function
-# TODO: write report function
-# TODO: write OFF function
-# TODO: write function to check for miss-spelling - completed
+# 1. user prompt for drink
+# 2. check if enough resources 
+# . 3. if enough resources:
+#   a) ask for money, give change if due
+#   b) make drink
+#   c) deduct from resources.
+# 4. if not enough money, print not enough money . Give refund.
+# 5. if user enters "report" - return current resources and profit made so far.
+# 6. if user enters "off" - exit the program.
 
 MENU = {
     "espresso": {
@@ -37,15 +41,25 @@ resources = {
 }
 
 
-# 1. user prompt for drink
-# 2. check if enough resources - return true or false
-# . 3. if enough resources:
-#   a) ask for money
-#   b) make drink
-#   c) deduct from resources.
-# 4. if not enough money, print not enough money . Give refund.
-# 5. If user types in report - return current resources and profit.
-# 6. if user types in off - the program finishes.
+profit = 0
+
+
+def exit_program():
+    return exit()
+
+
+def calculate_revenue(profit, beverage_choice):
+    beverage_cost = MENU[beverage_choice]["cost"]
+    profit += beverage_cost
+    return profit
+
+
+def statement_report(remaining_resources, revenue):
+    print(f'Water: {remaining_resources["water"]}ml')
+    print(f'Milk: {remaining_resources["milk"]}ml')
+    print(f'Coffee: {remaining_resources["coffee"]}g')
+    print(f"Money: £{revenue}")
+
 
 def is_enough_resources(order_ingredients, resources):
     for item in order_ingredients:
@@ -66,13 +80,13 @@ def money_difference(money_paid, money_required):
 
 
 def is_enough_money(money_paid, coffee_cost):
-    if money_paid <= coffee_cost:
+    if money_paid < coffee_cost:
         print(f"You did not pay enough money. Here is your refund £{money_paid}.")
         return False
     return True
 
 
-def deduct_from_resources(drink_ingr, current_resources):
+def deduct_from_resources(current_resources):
     drink_ingr = MENU[drink]["ingredients"]
     for key in drink_ingr:
         current_resources[key] = resources[key] - drink_ingr[key]
@@ -86,37 +100,47 @@ def is_drink_in_menu_offer(beverage):
     return True
 
 
-# def is_money_added(amount):
-#   if amount != float:
-#      print("Please add some money.")
-# return False
-
-
 while True:
 
-    drink = input("What would you like? (espresso/latte/cappuccino): ")
-    if is_drink_in_menu_offer(drink):
+    drink = input("What would you like to drink? (espresso/latte/cappuccino): ")
+
+    if drink == "off":
+        exit_program()
+
+    elif drink == "report":
+        statement_report(resources, profit)
+
+    elif is_drink_in_menu_offer(drink):
         drink_ingredients = MENU[drink]["ingredients"]
         print(f"{drink} ingredients are: {drink_ingredients}")
+        print(f"Current resources are {resources}.")
+
         if is_enough_resources(drink_ingredients, resources):
             drink_cost = order_cost(drink)
             print(f"Your drink costs £{drink_cost}.")
             while True:
                 money = input("Please pay for your drink. £")
-                if money.isdigit():                    
+                if money.isdigit():
+                    money = float(money)
                     break
-                elif isinstance(money,float):
-                    break                    
+                elif isinstance(money, float):
+                    break
                 else:
                     print(f"Add some money please.")
 
-            money = float(money)
             if is_enough_money(money, drink_cost):
                 print(f"Here is your {drink}, enjoy!")
                 change = money_difference(money, drink_cost)
                 print(f"Here is your change of £{change}.")
-                # print(f"Current resources are: {resources}.")
-                resources = deduct_from_resources(drink, resources)
-                # print(f"The remaining resources are: {resources}.")
-            else:
-                break
+                resources = deduct_from_resources(resources)
+                print(f"The remaining resources are: {resources}.")
+                profit = calculate_revenue(profit, drink)
+
+
+
+
+
+    
+
+          
+        
