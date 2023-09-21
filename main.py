@@ -64,7 +64,7 @@ def statement_report(remaining_resources, revenue):
 def is_enough_resources(order_ingredients, resources):
     for item in order_ingredients:
         if order_ingredients[item] > resources[item]:
-            print(f'Sorry, not enough {item}.')
+            print(f'Sorry, there is not enough {item}.')
             return False
     return True
 
