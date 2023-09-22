@@ -64,7 +64,7 @@ def statement_report(remaining_resources, revenue):
 def is_enough_resources(order_ingredients, resources):
     for item in order_ingredients:
         if order_ingredients[item] > resources[item]:
-            print(f'Sorry, there is not enough {item}.')
+            print(f'Sorry, not enough {item}.')
             return False
     return True
 
@@ -118,15 +118,16 @@ while True:
         if is_enough_resources(drink_ingredients, resources):
             drink_cost = order_cost(drink)
             print(f"Your drink costs £{drink_cost}.")
+
             while True:
                 money = input("Please pay for your drink. £")
-                if money.isdigit():
+
+                try:
                     money = float(money)
                     break
-                elif isinstance(money, float):
-                    break
-                else:
-                    print(f"Add some money please.")
+                except ValueError:
+                    print(f"{money} is not valid money")
+
 
             if is_enough_money(money, drink_cost):
                 print(f"Here is your {drink}, enjoy!")
